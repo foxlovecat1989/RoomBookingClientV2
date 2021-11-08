@@ -1,15 +1,34 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { Layout, LayoutCapacity, Room } from './model/Room';
+import { User } from './model/User';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
   private rooms = new Array<Room>();
+  private users = new Array<User>();
 
   constructor() {
     this.generateDummyRooms();
+    this.generateDummyUsers();
+  }
+
+  private generateDummyUsers() {
+    this.users = new Array<User>();
+    const user1 = new User();
+    user1.id = 1;
+    user1.name = 'Matt';
+    const user2 = new User();
+    user2.id = 2;
+    user2.name = 'Diana';
+    const user3 = new User();
+    user3.id = 3;
+    user3.name = 'Suzanne';
+    this.users.push(user1);
+    this.users.push(user2);
+    this.users.push(user3);
   }
 
   private generateDummyRooms() {
@@ -38,7 +57,12 @@ export class DataService {
   }
 
   getRooms():Observable<Array<Room>>{
-    
+
     return of(this.rooms);
+  }
+
+  getUsers(): Observable<Array<User>>{
+
+    return of(this.users);
   }
 }

@@ -37,10 +37,9 @@ export class RoomsComponent implements OnInit {
   }
 
   private setSelectedRoom(id: any) {
-    if (id)
+    if (id)   // under edit mode
       this.selectedRoom = this.rooms.find(room => room.id === +id)!;
-
-    else
+    else      // under add mode
       this.selectedRoom = new Room();
   }
 
