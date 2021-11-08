@@ -12,7 +12,7 @@ import { RoomDetailComponent } from './admin/rooms/room-detail/room-detail.compo
 import { RoomEditComponent } from './admin/rooms/room-edit/room-edit.component';
 import { UserDetailComponent } from './admin/users/user-detail/user-detail.component';
 import { UserEditComponent } from './admin/users/user-edit/user-edit.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -30,7 +30,8 @@ import { FormsModule } from '@angular/forms';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

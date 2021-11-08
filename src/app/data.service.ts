@@ -84,4 +84,9 @@ export class DataService {
 
     return of(newUser);
   }
+
+  isValidKey(key: string, obj: {[propName: string]: any}) : key is keyof object {
+    return key in obj;
+  }
+
 }

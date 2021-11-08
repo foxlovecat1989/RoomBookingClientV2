@@ -1,1 +1,25 @@
-<p>user-edit works! the user we are editing is {{room.name}}</p>
+<h1> {{room.id == null ? 'Add' : 'Edit'}} Room</h1>
+
+<form [formGroup]="roomForm">
+  <div class="form-group">
+    <label for="name">Name</label>
+    <input type="text" class="form-control" id="name" placeholder="room name" formControlName="roomName" required>
+    <div class="alert alert-danger"></div>
+
+  </div>
+  <div class="form-group">
+    <label for="location">Location</label>
+    <input type="text" class="form-control" id="location" placeholder="location" formControlName="location" required>
+    <div class="alert alert-danger"></div>
+  </div>
+
+  <h2>This room can accomodate:</h2>
+
+  <!-- list the layout types here -->
+  <div class="form-group" *ngFor="let key of keysOfLayout">
+    <label for="layout{{ key }}">{{ key }}</label>
+    <input type="number" class="form-control" id="layout{{ key }}" formControlName="layout{{ key }}">
+  </div>
+
+  <button type="button" class="btn btn-primary" (click)="onSubmit()">Save</button>
+</form>

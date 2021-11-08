@@ -11,7 +11,6 @@ export class RoomDetailComponent implements OnInit {
 
   @Input('room')
   room!: Room;
-  layouts = Object.keys(Layout);
 
   constructor(private router: Router) { }
 
@@ -23,6 +22,6 @@ export class RoomDetailComponent implements OnInit {
   }
 
   navigateToDelete(){
-    
+
   }
 }
