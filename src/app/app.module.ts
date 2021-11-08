@@ -8,6 +8,8 @@ import { CalendarComponent } from './calendar/calendar.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { RoomsComponent } from './admin/rooms/rooms.component';
 import { UsersComponent } from './admin/users/users.component';
+import { RoomDetailComponent } from './admin/rooms/room-detail/room-detail.component';
+import { RoomEditComponent } from './admin/rooms/room-edit/room-edit.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +18,9 @@ import { UsersComponent } from './admin/users/users.component';
     CalendarComponent,
     PageNotFoundComponent,
     RoomsComponent,
-    UsersComponent
+    UsersComponent,
+    RoomDetailComponent,
+    RoomEditComponent
   ],
   imports: [
     BrowserModule,

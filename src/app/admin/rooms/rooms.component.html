@@ -1,1 +1,28 @@
-<p>rooms works!</p>
+<h1>Rooms Admin</h1>
+<a class="btn btn-warning mb-3" (click)="navigateToAdd()">add</a>
+  <div class="row">
+    <div class="col-6">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let room of rooms"> <!-- repeat the tr for each room -->
+            <td>{{ room.id }}</td>
+            <td>{{ room.name }}</td>
+            <td>
+              <button type="button" class="btn btn-primary" (click)="navigateToView(room.id)">view</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-6">
+      <room-detail *ngIf="action==='view'" [room]="selectedRoom"></room-detail>
+      <room-edit *ngIf="action==='edit' || action==='add'" [room]="selectedRoom"></room-edit>
+    </div>
+  </div>
