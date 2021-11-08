@@ -13,7 +13,7 @@ export class UserEditComponent implements OnInit {
   @Input('user')
   user!: User;
   message!: string;
-  userForm!: User;
+  formUser!: User;
 
   constructor(
     private dataService: DataService,
@@ -21,16 +21,15 @@ export class UserEditComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.userForm = Object.assign({}, this.user);
+    this.duplicateUserObjectToForm();
   }
 
-  onSubmit(){
-    this.saveUpdateUser();
-
+  private duplicateUserObjectToForm() {
+    this.formUser = Object.assign({}, this.user);
   }
 
   private saveUpdateUser() {
-    this.dataService.updateUser(this.userForm).subscribe(
+    this.dataService.updateUser(this.formUser).subscribe(
       user => {
         this.user = user;
         this.router.navigate(['admin', 'users'], { queryParams: { id: this.user.id, action: 'view' } });
@@ -39,5 +38,24 @@ export class UserEditComponent implements OnInit {
         console.log('update user fail');
       }
     );
+  }
+
+  private saveAddUser() {
+    this.dataService.addUser(this.formUser).subscribe(
+      user => {
+        this.user = user;
+        this.router.navigate(['admin', 'users'], { queryParams: { id: this.user.id, action: 'view' } });
+      },
+      errors => {
+        console.log('update user fail');
+      }
+    );
+  }
+
+  onSubmit(){
+    if(this.user.id)  // under edit mode
+      this.saveUpdateUser();
+    else              // under add mode
+      this.saveAddUser();
   }
 }
