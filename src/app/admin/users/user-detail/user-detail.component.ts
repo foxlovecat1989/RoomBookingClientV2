@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { DataService } from 'src/app/data.service';
 import { User } from 'src/app/model/User';
 
 @Component({
@@ -12,7 +13,10 @@ export class UserDetailComponent implements OnInit {
   @Input('user')
   user!: User;
 
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    private dataService: DataService
+    ) { }
 
   ngOnInit(): void {
   }
@@ -21,7 +25,11 @@ export class UserDetailComponent implements OnInit {
     this.router.navigate(['admin', 'users'], {queryParams : {id : this.user.id, action : 'edit'}});
   }
 
-  navigateToDelete(){
-    this.router.navigate(['admin', 'users'], {queryParams : {id : this.user.id, action : 'delete'}});
+  deleteUser(){
+    this.dataService.deleteUser(this.user.id).subscribe(
+      () => {
+        this.router.navigate(['admin', 'users']);
+      }
+    );
   }
 }
