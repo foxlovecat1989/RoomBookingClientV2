@@ -13,6 +13,7 @@ import { RoomEditComponent } from './admin/rooms/room-edit/room-edit.component';
 import { UserDetailComponent } from './admin/users/user-detail/user-detail.component';
 import { UserEditComponent } from './admin/users/user-edit/user-edit.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { EditBookingComponent } from './calendar/edit-booking/edit-booking.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     RoomDetailComponent,
     RoomEditComponent,
     UserDetailComponent,
-    UserEditComponent
+    UserEditComponent,
+    EditBookingComponent
   ],
   imports: [
     BrowserModule,
