@@ -112,7 +112,11 @@ export class DataService {
   deleteUser(id: number) : Observable<any>{
     const user = this.users.find( user => user.id === id)!;
     this.users.splice(this.users.indexOf(user), 1);
-    
+
+    return of(null);
+  }
+
+  resetUserPassword(id: number) : Observable<any>{
     return of(null);
   }
 
