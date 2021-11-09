@@ -27,9 +27,7 @@ export class UserDetailComponent implements OnInit {
 
   deleteUser(){
     this.dataService.deleteUser(this.user.id).subscribe(
-      () => {
-        this.router.navigate(['admin', 'users']);
-      }
+      () => this.router.navigate(['admin', 'users'])
     );
   }
 
