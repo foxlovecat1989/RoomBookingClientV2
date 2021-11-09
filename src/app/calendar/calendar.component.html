@@ -23,7 +23,7 @@
         <p>Participants: {{ booking.participants }}</p>
       </div>
       <div class="col-6">
-        <a class="btn btn-warning">Amend</a>
+        <a class="btn btn-warning" (click)="editBooking(booking.id)">Amend</a>
         <a class="btn btn-danger">Cancel</a>
       </div>
     </div>

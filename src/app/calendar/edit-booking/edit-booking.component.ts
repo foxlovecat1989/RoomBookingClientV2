@@ -1,4 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { DataService } from 'src/app/data.service';
+import { Booking } from 'src/app/model/Booking';
+import { Layout, Room } from 'src/app/model/Room';
+import { User } from 'src/app/model/User';
 
 @Component({
   selector: 'app-edit-booking',
@@ -7,9 +12,57 @@ import { Component, OnInit } from '@angular/core';
 })
 export class EditBookingComponent implements OnInit {
 
-  constructor() { }
+  booking!: Booking;
+  rooms!: Array<Room>;
+  users!: Array<User>;
+  keysOfLayout = Object.keys(Layout);
+
+  constructor(
+    private dataService: DataService,
+    private activatedRoute: ActivatedRoute,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
+    this.loadingRooms();
+    this.loadingUsers();
+    this.loadingBooking();
   }
 
+  onSubmit(){
+    this.dataService.updateBooking(this.booking).subscribe(
+      booking => {
+        this.booking = booking;
+        this.router.navigate(['']);
+      },
+      errors => {
+        console.log('update booking fail');
+      }
+    );
+  }
+
+
+  private loadingBooking() {
+    const id = this.activatedRoute.snapshot.queryParams['id'];
+    this.dataService.getBooking(+id).subscribe(
+      booking => {
+        this.booking = booking;
+      },
+      errors => {
+        console.log('get booking fail');
+      }
+    );
+  }
+
+  private loadingUsers() {
+    this.dataService.getUsers().subscribe(
+      users => this.users = users
+    );
+  }
+
+  private loadingRooms() {
+    this.dataService.getRooms().subscribe(
+      rooms => this.rooms = rooms
+    );
+  }
 }
