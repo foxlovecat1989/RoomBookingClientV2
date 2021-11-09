@@ -166,12 +166,12 @@ export class DataService {
     return key in obj;
   }
 
-  getBookings() : Observable<Array<Booking>>{
-    return of(this.bookings);
-  }
-
   getBooking(id: number) : Observable<Booking>{
     return of(this.bookings.find(next => next.id === id)!);
+  }
+
+  getBookings(date: string) : Observable<Array<Booking>>{
+    return of(this.bookings.filter( book => book.date === date));
   }
 
   updateBooking(booking: Booking) : Observable<Booking> {
@@ -203,7 +203,7 @@ export class DataService {
   deleteBooking(id : number) : Observable<any>{
     const booking = this.bookings.find(b => b.id === id)!;
     this.bookings.splice(this.bookings.indexOf(booking), 1);
-    
+
     return of(null);
   }
 

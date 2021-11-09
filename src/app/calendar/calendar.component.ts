@@ -1,5 +1,6 @@
+import { formatDate } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../data.service';
 import { Booking } from '../model/Booking';
 
@@ -11,19 +12,28 @@ import { Booking } from '../model/Booking';
 export class CalendarComponent implements OnInit {
 
   bookings!: Array<Booking>;
+  selectedDate!: string;
 
   constructor(
     private dataService: DataService,
-    private router: Router
+    private router: Router,
+    private activatedRoute : ActivatedRoute
   ) { }
 
   ngOnInit(): void {
-    this.subscribeBookings();
+    this.activatedRoute.queryParams.subscribe(
+      params => {
+        this.selectedDate = params['selectedDate'];
+        if(!this.selectedDate)
+          this.selectedDate = formatDate(new Date(), 'yyyy-MM-dd', 'en-US');
+        this.loadingBooking();
+      }
+    );
+
   }
 
-
-  private subscribeBookings() {
-    this.dataService.getBookings().subscribe(
+  private loadingBooking() {
+    this.dataService.getBookings(this.selectedDate).subscribe(
       bookings => this.bookings = bookings
     );
   }
@@ -40,5 +50,9 @@ export class CalendarComponent implements OnInit {
     this.dataService.deleteBooking(id).subscribe(
       () => this.router.navigate([''])
     );
+  }
+
+  onDateChange(){
+    this.router.navigate([''], {queryParams : {selectedDate : this.selectedDate}});
   }
 }
