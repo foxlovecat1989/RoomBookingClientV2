@@ -1,8 +1,10 @@
 import { findLast } from '@angular/compiler/src/directive_resolver';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormControlName, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { DataService } from 'src/app/data.service';
+import { FormResetService } from 'src/app/form-reset.service';
 import { Layout, LayoutCapacity, Room } from 'src/app/model/Room';
 
 @Component({
@@ -10,26 +12,42 @@ import { Layout, LayoutCapacity, Room } from 'src/app/model/Room';
   templateUrl: './room-edit.component.html',
   styleUrls: ['./room-edit.component.css']
 })
-export class RoomEditComponent implements OnInit {
+export class RoomEditComponent implements OnInit, OnDestroy {
 
   @Input('room')
   room!: Room;
   keysOfLayout = Object.keys(Layout);
   roomForm!: FormGroup;
-
+  resetEventSubscription!: Subscription;
 
 
   constructor(
     private dataService: DataService,
     private formBuilder: FormBuilder,
-    private router: Router
+    private router: Router,
+    private formRestService: FormResetService
   ) { }
 
   ngOnInit(): void {
-    this.buildForm();
+    this.initializeForm();
+    this.subscribeFormResetEvent();
   }
 
-  private buildForm() {
+  private subscribeFormResetEvent() {
+    this.resetEventSubscription =
+      this.formRestService.resetRoomFormEvent.subscribe(
+        room => {
+          this.room = room;
+          this.initializeForm();
+        }
+      );
+  }
+
+  ngOnDestroy(): void {
+    this.resetEventSubscription.unsubscribe();
+  }
+
+  private initializeForm() {
     this.roomForm = this.formBuilder.group({
       roomName: [this.room.name, Validators.required],
       location: [this.room.location, [Validators.required, Validators.min(2)]]

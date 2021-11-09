@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from 'src/app/data.service';
+import { FormResetService } from 'src/app/form-reset.service';
 import { Room } from 'src/app/model/Room';
 
 @Component({
@@ -17,7 +18,8 @@ export class RoomsComponent implements OnInit {
   constructor(
     private dataService: DataService,
     private router : Router,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private formResetService: FormResetService
     ) { }
 
   ngOnInit(): void {
@@ -32,16 +34,24 @@ export class RoomsComponent implements OnInit {
         const id = params['id'];
         this.action = params['action'];
         this.setSelectedRoom(id);
+        this.handleReloadForm();
       }
     );
+  }
+
+  private handleReloadForm() {
+    if (this.action === 'add') // reset form
+      this.formResetService.resetRoomFormEvent.emit(this.selectedRoom);
   }
 
   private setSelectedRoom(id: any) {
     if (id)   // under edit mode
       this.selectedRoom = this.rooms.find(room => room.id === +id)!;
-    else      // under add mode
+    else{
       this.selectedRoom = new Room();
+    }
   }
+
 
   private subscribeRooms() {
     this.dataService.getRooms().subscribe(
