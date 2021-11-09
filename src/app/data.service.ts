@@ -196,10 +196,16 @@ export class DataService {
     }
     newBooking.id = id + 1;
     this.bookings.push(newBooking);
-    
+
     return of(newBooking);
   }
 
+  deleteBooking(id : number) : Observable<any>{
+    const booking = this.bookings.find(b => b.id === id)!;
+    this.bookings.splice(this.bookings.indexOf(booking), 1);
+    
+    return of(null);
+  }
 
 
 }
