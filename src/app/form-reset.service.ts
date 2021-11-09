@@ -1,5 +1,6 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { Room } from './model/Room';
+import { User } from './model/User';
 
 
 @Injectable({
@@ -8,6 +9,7 @@ import { Room } from './model/Room';
 export class FormResetService {
 
   resetRoomFormEvent = new EventEmitter<Room>();
+  resetUserFormEvent = new EventEmitter<User>();
 
   constructor() { }
 }

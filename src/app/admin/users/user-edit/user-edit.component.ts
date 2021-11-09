@@ -1,13 +1,15 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { DataService } from 'src/app/data.service';
+import { FormResetService } from 'src/app/form-reset.service';
 import { User } from 'src/app/model/User';
 @Component({
   selector: 'user-edit',
   templateUrl: './user-edit.component.html',
   styleUrls: ['./user-edit.component.css']
 })
-export class UserEditComponent implements OnInit {
+export class UserEditComponent implements OnInit, OnDestroy {
 
   @Input('user')
   user!: User;
@@ -15,6 +17,8 @@ export class UserEditComponent implements OnInit {
   formUser!: User;
   password!: string;
   password2!: string;
+  resetEventSubscription!: Subscription;
+
 
   nameIsValid = false;
   passwordIsValid = false;
@@ -22,16 +26,37 @@ export class UserEditComponent implements OnInit {
 
   constructor(
     private dataService: DataService,
-    private router: Router
+    private router: Router,
+    private formResetService: FormResetService
   ) { }
 
   ngOnInit(): void {
-    this.duplicateUserObjectToForm();
+    this.initializeForm();
+    this.subscribeFormResetEvent();
+  }
+
+
+  ngOnDestroy(): void {
+    this.resetEventSubscription.unsubscribe();
+  }
+
+  private initializeForm() {
+    this.copyUserObjectToForm();
     this.checkNameIsValid();
     this.checkPasswordIsValid();
   }
 
-  private duplicateUserObjectToForm() {
+
+  private subscribeFormResetEvent() {
+    this.resetEventSubscription = this.formResetService.resetUserFormEvent.subscribe(
+      user => {
+        this.user = user;
+        this.initializeForm();
+      }
+    );
+  }
+
+  private copyUserObjectToForm() {
     this.formUser = Object.assign({}, this.user);
   }
 

@@ -34,12 +34,12 @@ export class RoomsComponent implements OnInit {
         const id = params['id'];
         this.action = params['action'];
         this.setSelectedRoom(id);
-        this.handleReloadForm();
+        this.handleReloadFormCondition();
       }
     );
   }
 
-  private handleReloadForm() {
+  private handleReloadFormCondition() {
     if (this.action === 'add') // reset form
       this.formResetService.resetRoomFormEvent.emit(this.selectedRoom);
   }

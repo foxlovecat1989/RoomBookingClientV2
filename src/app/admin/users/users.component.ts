@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from 'src/app/data.service';
+import { FormResetService } from 'src/app/form-reset.service';
 import { User } from 'src/app/model/User';
 
 @Component({
@@ -17,7 +18,8 @@ export class UsersComponent implements OnInit {
   constructor(
     private dataService: DataService,
     private router: Router,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private formResetService : FormResetService
   ) { }
 
   ngOnInit(): void {
@@ -32,8 +34,14 @@ export class UsersComponent implements OnInit {
         const id = params['id'];
         this.action = params['action'];
         this.setSelectedUser(id);
+        this.handlerReloadFormCondition();
       }
     );
+  }
+
+  private handlerReloadFormCondition() {
+    if (this.action === 'add')
+      this.formResetService.resetUserFormEvent.emit(this.selectedUser);
   }
 
   private setSelectedUser(id: any) {
