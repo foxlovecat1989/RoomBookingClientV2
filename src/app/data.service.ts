@@ -188,5 +188,18 @@ export class DataService {
     return of(existingBooking);
   }
 
+  addBooking(newBooking: Booking) : Observable<Booking>{
+    let id = 0;
+    for(const booking of this.bookings){
+      if(booking.id > id)
+        id = booking.id;
+    }
+    newBooking.id = id + 1;
+    this.bookings.push(newBooking);
+    
+    return of(newBooking);
+  }
+
+
 
 }
