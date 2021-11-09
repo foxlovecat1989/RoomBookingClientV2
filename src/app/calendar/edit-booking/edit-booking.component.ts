@@ -17,6 +17,7 @@ export class EditBookingComponent implements OnInit {
   rooms!: Array<Room>;
   users!: Array<User>;
   keysOfLayout = Object.keys(Layout);
+  valuesOfLayout!: Array<string>;
 
   constructor(
     private dataService: DataService,
@@ -28,6 +29,11 @@ export class EditBookingComponent implements OnInit {
     this.loadingRooms();
     this.loadingUsers();
     this.loadingBooking();
+    this.loadingValuesOfLayout();
+  }
+
+  private loadingValuesOfLayout() {
+    this.dataService.getValuesOfLayout().subscribe(next => this.valuesOfLayout = next);
   }
 
   onSubmit(){

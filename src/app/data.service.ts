@@ -166,6 +166,19 @@ export class DataService {
     return key in obj;
   }
 
+  getValuesOfLayout(): Observable<Array<string>>{
+    const keysOfLayouts = Object.keys(Layout);
+    const valuesOfLayouts = new Array<string>();
+    for(const key of keysOfLayouts){
+      if(this.isValidKey(key, Layout)){
+        const valueOfLayout = Layout[key];
+        valuesOfLayouts.push(valueOfLayout);
+      }
+    }
+
+    return of(valuesOfLayouts);
+  }
+
   getBooking(id: number) : Observable<Booking>{
     return of(this.bookings.find(next => next.id === id)!);
   }
