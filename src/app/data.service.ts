@@ -1,5 +1,7 @@
+import { formatDate } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import { Booking } from './model/Booking';
 import { Layout, LayoutCapacity, Room } from './model/Room';
 import { User } from './model/User';
 
@@ -9,10 +11,38 @@ import { User } from './model/User';
 export class DataService {
   private rooms = new Array<Room>();
   private users = new Array<User>();
+  private bookings = new Array<Booking>();
 
   constructor() {
     this.generateDummyRooms();
     this.generateDummyUsers();
+    this.generateDummyBookings();
+  }
+
+  private generateDummyBookings() {
+    this.bookings = new Array<Booking>();
+    const booking1 = new Booking();
+    booking1.id = 1;
+    booking1.room = this.getRoom(1);
+    booking1.user = this.getUser(1);
+    booking1.layout = Layout.THEATER;
+    booking1.title = 'Example meeting';
+    booking1.date = formatDate(new Date(), 'yyyy-MM-dd', 'en-GB');
+    booking1.startTime = '11:30';
+    booking1.endTime = '12:30';
+    booking1.participants = 12;
+    const booking2 = new Booking();
+    booking2.id = 2;
+    booking2.room = this.getRoom(2);;
+    booking2.user = this.getUser(2);
+    booking2.layout = Layout.USHAPE;
+    booking2.title = 'Another meeting';
+    booking2.date = formatDate(new Date(), 'yyyy-MM-dd', 'en-GB');
+    booking2.startTime = '14:00';
+    booking2.endTime = '15:00';
+    booking2.participants = 5;
+    this.bookings.push(booking1);
+    this.bookings.push(booking2);
   }
 
   private generateDummyUsers() {
@@ -56,6 +86,10 @@ export class DataService {
     this.rooms.push(room2);
   }
 
+  private getRoom(id: number): Room{
+    return this.rooms.find(room => room.id === id)!;
+  }
+
   getRooms():Observable<Array<Room>>{
 
     return of(this.rooms);
@@ -89,7 +123,9 @@ export class DataService {
     return of(null);
   }
 
-
+  private getUser(id: number) : User{
+    return this.users.find(user => user.id === id)!;
+  }
 
   getUsers(): Observable<Array<User>>{
 
@@ -128,6 +164,10 @@ export class DataService {
 
   isValidKey(key: string, obj: {[propName: string]: any}) : key is keyof object {
     return key in obj;
+  }
+
+  getBookings() : Observable<Array<Booking>>{
+    return of(this.bookings);
   }
 
 }
