@@ -86,7 +86,7 @@ export class DataService {
     this.rooms.push(room2);
   }
 
-  private getRoom(id: number): Room{
+  getRoom(id: number): Room{
     return this.rooms.find(room => room.id === id)!;
   }
 
@@ -123,7 +123,7 @@ export class DataService {
     return of(null);
   }
 
-  private getUser(id: number) : User{
+  getUser(id: number) : User{
     return this.users.find(user => user.id === id)!;
   }
 

@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
+import { HttpClientModule } from '@angular/common/http'
 import { AppRoutingModule } from './app-routing.module';
+
 import { AppComponent } from './app.component';
 import { MenuComponent } from './menu/menu.component';
 import { CalendarComponent } from './calendar/calendar.component';
@@ -33,7 +34,8 @@ import { EditBookingComponent } from './calendar/edit-booking/edit-booking.compo
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

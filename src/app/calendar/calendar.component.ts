@@ -21,15 +21,18 @@ export class CalendarComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.subscribequeryParams();
+  }
+
+  private subscribequeryParams() {
     this.activatedRoute.queryParams.subscribe(
       params => {
         this.selectedDate = params['selectedDate'];
-        if(!this.selectedDate)
+        if (!this.selectedDate)
           this.selectedDate = formatDate(new Date(), 'yyyy-MM-dd', 'en-US');
         this.loadingBookings();
       }
     );
-
   }
 
   private loadingBookings() {
