@@ -55,7 +55,7 @@ export class RoomsComponent implements OnInit {
   }
 
 
-  private subscribeToLoadData() {
+  subscribeToLoadData() {
     this.dataService.getRooms().subscribe(
       rooms => {
         this.rooms = rooms;

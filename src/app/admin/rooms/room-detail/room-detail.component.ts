@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataService } from 'src/app/data.service';
 import { Layout, Room } from 'src/app/model/Room';
@@ -12,6 +12,11 @@ export class RoomDetailComponent implements OnInit {
 
   @Input('room')
   room!: Room;
+
+  @Output('dataChangedEvent')
+  dataChangedEvent = new EventEmitter();
+
+  message = '';
 
   constructor(
     private router: Router,
@@ -27,7 +32,13 @@ export class RoomDetailComponent implements OnInit {
 
   deleteRoom(){
     this.dataService.deleteRoom(this.room.id).subscribe(
-      () => this.router.navigate(['admin', 'rooms'])
+      () => {
+        this.dataChangedEvent.emit();
+        this.router.navigate(['admin', 'rooms']);
+      },
+      error => {
+        this.message = 'Sorry, this room cannot be deleted this time.';
+      }
     );
   }
 }

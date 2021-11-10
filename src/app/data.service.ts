@@ -69,7 +69,7 @@ export class DataService {
 
   deleteRoom(id: number) : Observable<any>{
 
-    return of(null);
+    return this.http.delete(environment.restURL + '/api/v1/rooms/' + id);
   }
 
 

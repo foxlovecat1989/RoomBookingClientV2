@@ -24,7 +24,7 @@
     </div>
 
     <div class="col-6">
-      <room-detail *ngIf="action==='view'" [room]="selectedRoom"></room-detail>
+      <room-detail *ngIf="action==='view'" [room]="selectedRoom" (dataChangedEvent)="subscribeToLoadData()"></room-detail>
       <room-edit *ngIf="action==='edit' || action==='add'" [room]="selectedRoom"></room-edit>
     </div>
   </div>
