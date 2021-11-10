@@ -20,7 +20,9 @@
           </tr>
         </tbody>
       </table>
+      <div *ngIf="shouldLoadingData">Please wait... getting the list of rooms</div>
     </div>
+
     <div class="col-6">
       <room-detail *ngIf="action==='view'" [room]="selectedRoom"></room-detail>
       <room-edit *ngIf="action==='edit' || action==='add'" [room]="selectedRoom"></room-edit>
