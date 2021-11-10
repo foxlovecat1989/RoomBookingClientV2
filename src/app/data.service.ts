@@ -45,8 +45,16 @@ export class DataService {
     );
   }
 
-  getRooms(): Observable<any>{
-    return of(null);
+  getRooms(): Observable<Array<Room>>{
+    return this.http.get<Array<Room>>(environment.restURL + '/api/v1/rooms').pipe(
+      map(
+        datas => {
+          const rooms = new Array<Room>();
+          datas.forEach(data => rooms.push(Room.fromHttp(data)));
+          return rooms;
+        }
+      )
+    );
   }
 
   updateRoom(room: Room) : Observable<any>{
