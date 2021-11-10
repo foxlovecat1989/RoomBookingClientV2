@@ -32,6 +32,14 @@
             "scripts": []
           },
           "configurations": {
+            "local":{
+              "fileReplacements": [
+                {
+                  "replace": "src/app/data.service.ts",
+                  "with": "src/app/data.service.local.ts"
+                }
+              ]
+            },
             "production": {
               "budgets": [
                 {
@@ -72,6 +80,9 @@
             },
             "development": {
               "browserTarget": "RoomBookingClientV2:build:development"
+            },
+            "local": {
+              "browserTarget": "RoomBookingClientV2:build:local"
             }
           },
           "defaultConfiguration": "development"

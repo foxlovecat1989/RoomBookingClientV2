@@ -1,7 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { environment } from 'src/environments/environment';
 import { Booking } from './model/Booking';
 import { Layout, LayoutCapacity, Room } from './model/Room';
 import { User } from './model/User';
@@ -15,7 +14,6 @@ export class DataService {
   private bookings = new Array<Booking>();
 
   constructor() {
-    console.log(environment.restURL);
     this.generateDummyRooms();
     this.generateDummyUsers();
     this.generateDummyBookings();
@@ -92,23 +90,36 @@ export class DataService {
     return this.rooms.find(room => room.id === id)!;
   }
 
-  getRooms():Observable<any>{
+  getRooms():Observable<Array<Room>>{
 
-    return of(null);
+    return of(this.rooms);
   }
 
-  updateRoom(room: Room) : Observable<any>{
+  updateRoom(room: Room) : Observable<Room>{
+    const originalRoom = this.rooms.find(next => next.id === room.id)!;
+    originalRoom.name = room.name;
+    originalRoom.location = room.location;
+    originalRoom.layoutCapacities = room.layoutCapacities;
 
-    return of(null);
+    return of(originalRoom);
   }
 
-  addRoom(newRoom : Room) : Observable<any>{
+  addRoom(newRoom : Room) : Observable<Room>{
+    let id = 0;
+    for(const room of this.rooms){
+      if(room.id > id){
+        id = room.id;
+      }
+    }
+    newRoom.id = id + 1;
+    this.rooms.push(newRoom);
 
-    return of(null);
+    return of(newRoom);
   }
 
   deleteRoom(id: number) : Observable<any>{
-
+    const room = this.rooms.find(r => r.id === id)!;
+    this.rooms.splice(this.rooms.indexOf(room), 1);
     return of(null);
   }
 
@@ -116,24 +127,33 @@ export class DataService {
     return this.users.find(user => user.id === id)!;
   }
 
-  getUsers(): Observable<any>{
+  getUsers(): Observable<Array<User>>{
 
-    return of(null);
+    return of(this.users);
   }
 
-  updateUser(updateUser: User): Observable<any>{
+  updateUser(updateUser: User): Observable<User>{
+    const originUser = this.users.find(user => user.id === updateUser.id)!;
+    originUser.name = updateUser.name;
 
-
-    return of(null);
+    return of(originUser);
   }
 
-  addUser(newUser: User): Observable<any>{
+  addUser(newUser: User): Observable<User>{
+    let id = 0;
+    for(const user of this.users){
+      if(id < user.id)
+        id = user.id;
+    }
+    newUser.id = id + 1;
+    this.users.push(newUser);
 
-    return of(null);
+    return of(newUser);
   }
 
   deleteUser(id: number) : Observable<any>{
-
+    const user = this.users.find( user => user.id === id)!;
+    this.users.splice(this.users.indexOf(user), 1);
 
     return of(null);
   }
@@ -159,27 +179,43 @@ export class DataService {
     return of(valuesOfLayouts);
   }
 
-  getBooking(id: number) : Observable<any>{
-    return of(null);
+  getBooking(id: number) : Observable<Booking>{
+    return of(this.bookings.find(next => next.id === id)!);
   }
 
-  getBookings(date: string) : Observable<any>{
-    return of(null);
+  getBookings(date: string) : Observable<Array<Booking>>{
+    return of(this.bookings.filter( book => book.date === date));
   }
 
-  updateBooking(booking: Booking) : Observable<any> {
+  updateBooking(booking: Booking) : Observable<Booking> {
+    const existingBooking = this.bookings.find( b => b.id === booking.id)!;
+    existingBooking.date = booking.date;
+    existingBooking.startTime = booking.startTime;
+    existingBooking.endTime = booking.endTime;
+    existingBooking.title = booking.title;
+    existingBooking.layout = booking.layout;
+    existingBooking.room = booking.room;
+    existingBooking.user = booking.user;
+    existingBooking.participants = booking.participants;
 
-
-    return of(null);
+    return of(existingBooking);
   }
 
-  addBooking(newBooking: Booking) : Observable<any>{
+  addBooking(newBooking: Booking) : Observable<Booking>{
+    let id = 0;
+    for(const booking of this.bookings){
+      if(booking.id > id)
+        id = booking.id;
+    }
+    newBooking.id = id + 1;
+    this.bookings.push(newBooking);
 
-    return of(null);
+    return of(newBooking);
   }
 
   deleteBooking(id : number) : Observable<any>{
-
+    const booking = this.bookings.find(b => b.id === id)!;
+    this.bookings.splice(this.bookings.indexOf(booking), 1);
 
     return of(null);
   }
