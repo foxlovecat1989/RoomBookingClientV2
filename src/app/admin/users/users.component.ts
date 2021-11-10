@@ -54,7 +54,7 @@ export class UsersComponent implements OnInit {
       this.selectedUser = new User();
   }
 
-  private subscribeToLoadData() {
+  subscribeToLoadData() {
     this.dataService.getUsers().subscribe(
       users => {
         this.users = users;
