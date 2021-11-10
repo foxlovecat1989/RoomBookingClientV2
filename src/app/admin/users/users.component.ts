@@ -14,6 +14,10 @@ export class UsersComponent implements OnInit {
   users = new Array<User>();
   action!: string;
   selectedUser!: User;
+  message = 'Please wait... getting the list of users';
+  shouldLoadingData = true;
+  timesOfReloadAttempt = 0 ;
+
 
   constructor(
     private dataService: DataService,
@@ -23,8 +27,7 @@ export class UsersComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.subscribeUsers();
-    this.subscribequeryParams();
+    this.subscribeToLoadData();
   }
 
 
@@ -51,15 +54,26 @@ export class UsersComponent implements OnInit {
       this.selectedUser = new User();
   }
 
-  private subscribeUsers() {
+  private subscribeToLoadData() {
     this.dataService.getUsers().subscribe(
       users => {
         this.users = users;
+        this.shouldLoadingData = false;
+        this.subscribequeryParams();
       },
       errors => {
-        console.log('get users fail');
+        this.attemptToReloadData();
       }
     );
+  }
+
+  private attemptToReloadData() {
+    if (this.timesOfReloadAttempt < 10) {
+      this.subscribeToLoadData();
+      this.timesOfReloadAttempt++;
+    }
+    else
+      this.message = 'An Error Occurred, please contact support...';
   }
 
   navigateToAdd(){

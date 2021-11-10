@@ -76,7 +76,6 @@ export class RoomsComponent implements OnInit {
       this.subscribeToLoadData();
       this.timesOfReloadAttempt++;
     }
-
     else
       this.message = 'Sorry, something went wrong, please contact support...';
   }

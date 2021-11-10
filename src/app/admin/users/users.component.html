@@ -18,6 +18,7 @@
       </tr>
       </tbody>
     </table>
+    <div *ngIf="shouldLoadingData">{{ message }}</div>
   </div>
   <div class="col-6">
     <user-detail *ngIf="action==='view'" [user]="selectedUser"></user-detail>
