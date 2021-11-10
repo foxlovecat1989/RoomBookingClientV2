@@ -26,13 +26,13 @@ export class CalendarComponent implements OnInit {
         this.selectedDate = params['selectedDate'];
         if(!this.selectedDate)
           this.selectedDate = formatDate(new Date(), 'yyyy-MM-dd', 'en-US');
-        this.loadingBooking();
+        this.loadingBookings();
       }
     );
 
   }
 
-  private loadingBooking() {
+  private loadingBookings() {
     this.dataService.getBookings(this.selectedDate).subscribe(
       bookings => this.bookings = bookings
     );
@@ -48,7 +48,9 @@ export class CalendarComponent implements OnInit {
 
   deleteBooking(id: number){
     this.dataService.deleteBooking(id).subscribe(
-      () => this.router.navigate([''])
+      bookings => {
+        this.bookings = bookings;
+      }
     );
   }
 
