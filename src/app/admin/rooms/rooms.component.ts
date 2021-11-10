@@ -63,7 +63,8 @@ export class RoomsComponent implements OnInit {
       },
       error => {
         this.message = 'Sorry, Something went wrong - please try again... ' + error.message;
-        console.log('error', error);
+        if(error.status === 402)
+          this.message = 'You need to pay for this application.'
       }
     );
   }
