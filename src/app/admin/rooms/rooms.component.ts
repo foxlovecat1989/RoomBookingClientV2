@@ -15,6 +15,7 @@ export class RoomsComponent implements OnInit {
   action!: string;
   selectedRoom!: Room;
   shouldLoadingData = true;
+  message = 'Please wait... getting the list of rooms';
 
   constructor(
     private dataService: DataService,
@@ -60,8 +61,9 @@ export class RoomsComponent implements OnInit {
         this.rooms = rooms;
         this.shouldLoadingData = false;
       },
-      errors => {
-        console.log('get rooms fail');
+      error => {
+        this.message = 'Sorry, Something went wrong - please try again... ' + error.message;
+        console.log('error', error);
       }
     );
   }
