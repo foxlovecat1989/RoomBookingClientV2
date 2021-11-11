@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../data.service';
 import { Booking } from '../model/Booking';
@@ -13,6 +13,8 @@ export class CalendarComponent implements OnInit {
 
   bookings!: Array<Booking>;
   selectedDate!: string;
+  dataLoaded = false;
+  message = '';
 
   constructor(
     private dataService: DataService,
@@ -20,14 +22,8 @@ export class CalendarComponent implements OnInit {
     private activatedRoute : ActivatedRoute
   ) { }
 
-  ngOnInit(): void {
-    this.dataService.getUser(13).subscribe(
-      user => {
-        console.log(user);
-        console.log(typeof user);
-      }
-    );
 
+  ngOnInit(): void {
     this.subscribequeryParams();
   }
 
@@ -43,8 +39,17 @@ export class CalendarComponent implements OnInit {
   }
 
   private loadingBookings() {
+    this.message = 'Loading Data...';
     this.dataService.getBookings(this.selectedDate).subscribe(
-      bookings => this.bookings = bookings
+      bookings => {
+        this.bookings = bookings;
+        this.dataLoaded = true;
+        this.message = '';
+      },
+      error => {
+        this.message = 'Error - Sorry, the data could not be loaded...'
+        console.log('get booking fail');
+      }
     );
   }
 
@@ -57,9 +62,14 @@ export class CalendarComponent implements OnInit {
   }
 
   deleteBooking(id: number){
+    this.message = 'Deleting the booking...'
     this.dataService.deleteBooking(id).subscribe(
-      bookings => {
-        this.bookings = bookings;
+      next => {
+        this.message = '';
+        this.loadingBookings();
+      },
+      error => {
+        this.message = 'ERROR - Sorry, this booking could not be deleted'
       }
     );
   }

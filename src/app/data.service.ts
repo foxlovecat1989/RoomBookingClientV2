@@ -96,8 +96,17 @@ export class DataService {
     return of(null);
   }
 
-  getBookings(date: string) : Observable<any>{
-    return of(null);
+  getBookings(date: string) : Observable<Array<Booking>>{
+    return this.http.get<Array<Booking>>(environment.restURL + '/api/v1/bookings/' + date).pipe(
+      map(
+        bookings => {
+          const newbookings = new Array<Booking>();
+          bookings.forEach(booking => newbookings.push(Booking.fromHttp(booking)));
+
+          return newbookings;
+        }
+      )
+    );
   }
 
   updateBooking(booking: Booking) : Observable<any> {
@@ -111,7 +120,7 @@ export class DataService {
 
   deleteBooking(id : number) : Observable<any>{
 
-    return of(null);
+    return this.http.delete(environment.restURL + '/api/v1/bookings/' + id);
   }
   isValidKey(key: string, obj: {[propName: string]: any}) : key is keyof object {
     return key in obj;
