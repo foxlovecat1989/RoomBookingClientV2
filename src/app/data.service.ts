@@ -57,15 +57,14 @@ export class DataService {
     );
   }
 
-  updateRoom(room: Room) : Observable<any>{
-
-    return of(null);
+  updateRoom(room: Room) : Observable<Room>{
+    return this.http.put<Room>(environment.restURL + '/api/v1/rooms', this.getCorrectedRoom(room));
   }
 
-  addRoom(newRoom : Room) : Observable<any>{
-
-    return of(null);
+  addRoom(newRoom : Room) : Observable<Room>{
+    return this.http.post<Room>(environment.restURL + '/api/v1/rooms', this.getCorrectedRoom(newRoom));
   }
+
 
   deleteRoom(id: number) : Observable<any>{
     return this.http.delete(environment.restURL + '/api/v1/rooms/' + id);
@@ -133,6 +132,24 @@ export class DataService {
     }
 
     return of(valuesOfLayouts);
+  }
+
+  private getCorrectedRoom(room : Room) {
+    const correctedRoom : {'id': number, 'name': string, 'location': string, layoutCapacities : Array<LayoutCapacity>}
+      = {id: room.id, name: room.name, location: room.location, layoutCapacities : []};
+    for (const lc of room.layoutCapacities) {
+      let correctLayout : Layout = Layout.THEATER;
+      for (let member in Layout) {
+        if(this.isValidKey(member, Layout))
+          if (Layout[member] === lc.layout) {
+            correctLayout = member;
+          }
+      }
+      const correctedLayout : {'layout': Layout, 'capacity': number}
+          = {layout : correctLayout, capacity: lc.capacity};
+      correctedRoom.layoutCapacities.push(correctedLayout);
+    }
+    return correctedRoom;
   }
 
 }

@@ -1,5 +1,4 @@
-import { findLast } from '@angular/compiler/src/directive_resolver';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormControlName, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -16,10 +15,14 @@ export class RoomEditComponent implements OnInit, OnDestroy {
 
   @Input('room')
   room!: Room;
+
+  @Output('dataChangedEvent')
+  dataChangedEvent = new EventEmitter();
+
   keysOfLayout = Object.keys(Layout);
   roomForm!: FormGroup;
   resetEventSubscription!: Subscription;
-
+  message = '';
 
   constructor(
     private dataService: DataService,
@@ -74,10 +77,11 @@ export class RoomEditComponent implements OnInit, OnDestroy {
     this.dataService.addRoom(this.room).subscribe(
       room => {
         this.room = room;
+        this.dataChangedEvent.emit();
         this.router.navigate(['admin', 'rooms'], { queryParams: { id: this.room.id, action: 'view' } });
       },
       error => {
-        console.log('add room fail');
+        this.message = 'Something went wrong, you may wish to try again...'
       }
     );
   }
@@ -86,10 +90,11 @@ export class RoomEditComponent implements OnInit, OnDestroy {
     this.dataService.updateRoom(this.room).subscribe(
       room => {
         this.room = room;
+        this.dataChangedEvent.emit();
         this.router.navigate(['admin', 'rooms'], { queryParams: { id: this.room.id, action: 'view' } });
       },
       error => {
-        console.log('update room fail');
+        this.message = 'Something went wrong, you may wish to try again...'
       }
     );
   }
