@@ -140,7 +140,7 @@ export class DataService {
     for (const lc of room.layoutCapacities) {
       let correctLayout : Layout = Layout.THEATER;
       for (let member in Layout) {
-        if(this.isValidKey(member, Layout))
+        if(LayoutCapacity.isValidKey(member))
           if (Layout[member] === lc.layout) {
             correctLayout = member;
           }
