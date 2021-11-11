@@ -71,17 +71,13 @@ export class DataService {
     return this.http.delete(environment.restURL + '/api/v1/rooms/' + id);
   }
 
-
-
-  updateUser(updateUser: User): Observable<any>{
-
-
-    return of(null);
+  updateUser(updateUser: User): Observable<User>{
+    return this.http.put<User>(environment.restURL + '/api/v1/users', updateUser);
   }
 
-  addUser(newUser: User): Observable<any>{
-
-    return of(null);
+  addUser(newUser: User, password: string): Observable<User>{
+    const fullUser = {id : newUser.id, name : newUser.name, password : password };
+    return this.http.post<User>(environment.restURL + '/api/v1/users', fullUser);
   }
 
   deleteUser(id: number) : Observable<any>{

@@ -27,7 +27,7 @@ export class UsersComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.subscribeToLoadData();
+    this.loadingData();
   }
 
 
@@ -54,7 +54,7 @@ export class UsersComponent implements OnInit {
       this.selectedUser = new User();
   }
 
-  subscribeToLoadData() {
+  loadingData() {
     this.dataService.getUsers().subscribe(
       users => {
         this.users = users;
@@ -69,7 +69,7 @@ export class UsersComponent implements OnInit {
 
   private attemptToReloadData() {
     if (this.timesOfReloadAttempt < 10) {
-      this.subscribeToLoadData();
+      this.loadingData();
       this.timesOfReloadAttempt++;
     }
     else

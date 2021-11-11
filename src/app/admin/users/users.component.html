@@ -21,7 +21,7 @@
     <div *ngIf="shouldLoadingData">{{ message }}</div>
   </div>
   <div class="col-6">
-    <user-detail *ngIf="action==='view'" [user]="selectedUser" (dataChangedEvent)="subscribeToLoadData()"></user-detail>
-    <user-edit *ngIf="action==='edit' || action==='add'" [user]="selectedUser"></user-edit>
+    <user-detail *ngIf="action==='view'" [user]="selectedUser" (dataChangedEvent)="loadingData()"></user-detail>
+    <user-edit *ngIf="action==='edit' || action==='add'" [user]="selectedUser" (dataChangedEvent)="loadingData()"></user-edit>
   </div>
 </div>

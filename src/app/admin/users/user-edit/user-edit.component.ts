@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { DataService } from 'src/app/data.service';
@@ -13,7 +13,11 @@ export class UserEditComponent implements OnInit, OnDestroy {
 
   @Input('user')
   user!: User;
-  message!: string;
+
+  @Output('dataChangedEvent')
+  dataChangedEvent = new EventEmitter();
+
+  message = '';
   formUser!: User;
   password!: string;
   password2!: string;
@@ -64,27 +68,30 @@ export class UserEditComponent implements OnInit, OnDestroy {
     this.dataService.updateUser(this.formUser).subscribe(
       user => {
         this.user = user;
+        this.dataChangedEvent.emit();
         this.router.navigate(['admin', 'users'], { queryParams: { id: this.user.id, action: 'view' } });
       },
       errors => {
-        console.log('update user fail');
+        this.message = 'Error - Saving updating User fail';
       }
     );
   }
 
   private saveAddUser() {
-    this.dataService.addUser(this.formUser).subscribe(
+    this.dataService.addUser(this.formUser, this.password).subscribe(
       user => {
         this.user = user;
+        this.dataChangedEvent.emit();
         this.router.navigate(['admin', 'users'], { queryParams: { id: this.user.id, action: 'view' } });
       },
       errors => {
-        console.log('update user fail');
+        this.message = 'Error - Saving adding User fail';
       }
     );
   }
 
   onSubmit(){
+    this.message = 'Saving...';
     if(this.user.id)  // under edit mode
       this.saveUpdateUser();
     else              // under add mode
