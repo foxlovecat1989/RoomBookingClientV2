@@ -18,6 +18,8 @@ export class EditBookingComponent implements OnInit {
   users!: Array<User>;
   keysOfLayout = Object.keys(Layout);
   valuesOfLayout!: Array<string>;
+  isDataLoaded = false;
+  message = 'Please wait...';
 
   constructor(
     private dataService: DataService,
@@ -74,6 +76,8 @@ export class EditBookingComponent implements OnInit {
       this.dataService.getBooking(+id).subscribe(
         booking => {
           this.booking = booking;
+          this.isDataLoaded = true;
+          this.message = '';
         },
         errors => {
           console.log('get booking fail');
@@ -81,6 +85,8 @@ export class EditBookingComponent implements OnInit {
       );
     } else{
       this.booking = new Booking();
+      this.isDataLoaded = true;
+      this.message = '';
     }
 
   }

@@ -56,7 +56,7 @@ export class RoomEditComponent implements OnInit, OnDestroy {
       location: [this.room.location, [Validators.required, Validators.min(2)]]
     });
     for(const key of this.keysOfLayout){
-      if(this.dataService.isValidKey(key, Layout)){
+      if(LayoutCapacity.isValidKey(key)){
         const layoutCapacity = this.room.layoutCapacities.find(layoutCapacity => layoutCapacity.layout === Layout[key]);
         const capacity = layoutCapacity == null ? 0 : layoutCapacity.capacity;  // layoutCapacity could be null
         this.roomForm.addControl(`layout${key}`, this.formBuilder.control(capacity));
@@ -105,7 +105,7 @@ export class RoomEditComponent implements OnInit, OnDestroy {
     this.room.layoutCapacities = new Array<LayoutCapacity>();
     for(const key of this.keysOfLayout){
       const layoutCapacity = new LayoutCapacity();
-      if(this.dataService.isValidKey(key, Layout)){
+      if(LayoutCapacity.isValidKey(key)){
         layoutCapacity.layout = Layout[key];
         layoutCapacity.capacity = this.roomForm.controls[`layout${key}`].value;
       }

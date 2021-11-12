@@ -87,8 +87,10 @@ export class DataService {
     return this.http.get(environment.restURL + '/api/v1/users/resetPassword/' + id);
   }
 
-  getBooking(id: number) : Observable<any>{
-    return of(null);
+  getBooking(id: number) : Observable<Booking>{
+    return this.http.get<Booking>(environment.restURL + '/api/v1/bookings?id=' + id).pipe(
+      map(booking => Booking.fromHttp(booking))
+    );
   }
 
   getBookings(date: string) : Observable<Array<Booking>>{
@@ -117,15 +119,12 @@ export class DataService {
 
     return this.http.delete(environment.restURL + '/api/v1/bookings/' + id);
   }
-  isValidKey(key: string, obj: {[propName: string]: any}) : key is keyof object {
-    return key in obj;
-  }
 
   getValuesOfLayout(): Observable<Array<string>>{
     const keysOfLayouts = Object.keys(Layout);
     const valuesOfLayouts = new Array<string>();
     for(const key of keysOfLayouts){
-      if(this.isValidKey(key, Layout)){
+      if(LayoutCapacity.isValidKey(key)){
         const valueOfLayout = Layout[key];
         valuesOfLayouts.push(valueOfLayout);
       }
