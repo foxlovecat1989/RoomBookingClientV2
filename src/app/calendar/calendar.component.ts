@@ -58,7 +58,7 @@ export class CalendarComponent implements OnInit {
   }
 
   addBooking(){
-    this.router.navigate(['editBooking']);
+    this.router.navigate(['addBooking']);
   }
 
   deleteBooking(id: number){

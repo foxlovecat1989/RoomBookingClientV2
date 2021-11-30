@@ -1,6 +1,6 @@
-import { formatDate } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { map } from 'rxjs/operators';
 import { DataService } from 'src/app/data.service';
 import { Booking } from 'src/app/model/Booking';
 import { Layout, Room } from 'src/app/model/Room';
@@ -28,8 +28,8 @@ export class EditBookingComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.loadingRooms();
-    this.loadingUsers();
+    this.rooms = this.activatedRoute.snapshot.data['rooms'];
+    this.users = this.activatedRoute.snapshot.data['users'];
     this.loadingBooking();
     this.loadingValuesOfLayout();
   }
@@ -73,7 +73,17 @@ export class EditBookingComponent implements OnInit {
   private loadingBooking() {
     const id = this.activatedRoute.snapshot.queryParams['id'];
     if(id){
-      this.dataService.getBooking(+id).subscribe(
+      this.dataService.getBooking(+id)
+      .pipe(
+        map(
+          booking => {
+            booking.room = this.rooms.find(room => room.id === booking.room.id)!;
+            booking.user = this.users.find(user => user.id === booking.user.id)!;
+            return booking;
+          }
+        )
+      )
+      .subscribe(
         booking => {
           this.booking = booking;
           this.isDataLoaded = true;
