@@ -9,7 +9,9 @@ import { Room } from './model/Room';
 })
 export class PrefetchRoomsService implements Resolve<Observable<Array<Room>>>{
 
-  constructor(private dataService: DataService) { }
+  constructor(
+    private dataService: DataService
+    ) { }
 
   resolve() {
     return this.dataService.getRooms();

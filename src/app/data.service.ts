@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -45,8 +45,23 @@ export class DataService {
     );
   }
 
+  getRoomsT(token: string): Observable<Array<Room>>{
+    const headers = new HttpHeaders().append('Authorization', 'Bearer ' + token);
+    return this.http.get<Array<Room>>(environment.restURL + '/api/v1/rooms', {headers: headers})
+    .pipe(
+      map(
+        datas => {
+          const rooms = new Array<Room>();
+          datas.forEach(data => rooms.push(Room.fromHttp(data)));
+          return rooms;
+        }
+      )
+    );
+  }
+
   getRooms(): Observable<Array<Room>>{
-    return this.http.get<Array<Room>>(environment.restURL + '/api/v1/rooms').pipe(
+    return this.http.get<Array<Room>>(environment.restURL + '/api/v1/rooms')
+    .pipe(
       map(
         datas => {
           const rooms = new Array<Room>();
@@ -59,6 +74,11 @@ export class DataService {
 
   updateRoom(room: Room) : Observable<Room>{
     return this.http.put<Room>(environment.restURL + '/api/v1/rooms', this.getCorrectedRoom(room));
+  }
+
+  updateRoomT(room: Room, token: string) : Observable<Room>{
+    const headers = new HttpHeaders().append('Authorization', 'Bearer ' + token);
+    return this.http.put<Room>(environment.restURL + '/api/v1/rooms', this.getCorrectedRoom(room), {headers: headers});
   }
 
   addRoom(newRoom : Room) : Observable<Room>{
@@ -131,6 +151,12 @@ export class DataService {
     }
 
     return of(valuesOfLayouts);
+  }
+
+  validateUser(username: string, password: string): Observable<{result : string}>{
+    const authData = btoa(`${username}:${password}`);
+    const headers = new HttpHeaders().append('Authorization', 'Basic ' + authData);
+    return this.http.get<{result : string}>(environment.restURL + '/api/basicAuth/validate', {headers: headers});
   }
 
   private getCorrectedRoom(room : Room) {

@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
+import { DataService } from './data.service';
 
 @Injectable({
   providedIn: 'root'
@@ -6,13 +7,36 @@ import { Injectable } from '@angular/core';
 export class AuthService {
 
   isAuthenticated = false;
+  authenticationResultEvent = new EventEmitter<boolean>();
+  jwtToken!: string;
 
-  constructor() { }
+  constructor(
+    private dataService: DataService
+  ) { }
 
   authenticate(name: string, password: string): boolean{
-    if(name === 'mat' && password === 'secret')
-      this.isAuthenticated = true;
+    this.dataService.validateUser(name, password).subscribe(
+      next => {
+        this.jwtToken = next.result;
+        this.isAuthenticated = true;
+        this.authenticationResultEvent.emit(this.isAuthenticated);
+      },
+      error => {
+        this.isAuthenticated = false;
+        this.authenticationResultEvent.emit(this.isAuthenticated);
+      }
+    );
 
     return this.isAuthenticated;
+  }
+
+  getRole(): string | null{
+    if(this.jwtToken == null)
+      return null;
+
+     const encodedPayload = this.jwtToken.split('.')[1];
+     const payload = atob(encodedPayload);
+
+    return JSON.parse(payload).role;
   }
 }

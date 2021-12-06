@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from 'src/app/auth.service';
 import { DataService } from 'src/app/data.service';
 import { FormResetService } from 'src/app/form-reset.service';
 import { Room } from 'src/app/model/Room';
@@ -17,16 +18,20 @@ export class RoomsComponent implements OnInit {
   shouldLoadingData = true;
   message = 'Please wait... getting the list of rooms';
   timesOfReloadAttempt = 0;
+  isAdmin = false;
 
   constructor(
     private dataService: DataService,
     private router : Router,
     private activatedRoute: ActivatedRoute,
-    private formResetService: FormResetService
+    private formResetService: FormResetService,
+    private authService: AuthService
     ) { }
 
   ngOnInit(): void {
     this.subscribeToLoadData();
+    if(this.authService.getRole() === 'ADMIN')
+      this.isAdmin = true;
   }
 
 
@@ -56,7 +61,7 @@ export class RoomsComponent implements OnInit {
 
 
   subscribeToLoadData() {
-    this.dataService.getRooms().subscribe(
+    this.dataService.getRoomsT(this.authService.jwtToken).subscribe(
       rooms => {
         this.rooms = rooms;
         this.shouldLoadingData = false;

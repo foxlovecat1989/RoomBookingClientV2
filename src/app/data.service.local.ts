@@ -220,5 +220,8 @@ export class DataService {
     return of(this.bookings);
   }
 
+  validateUser(username: string, password: string): Observable<{result : string}>{
+    return of({result : 'OK'});
+  }
 
 }

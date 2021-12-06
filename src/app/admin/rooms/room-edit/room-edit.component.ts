@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angu
 import { FormBuilder, FormControl, FormControlName, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { AuthService } from 'src/app/auth.service';
 import { DataService } from 'src/app/data.service';
 import { FormResetService } from 'src/app/form-reset.service';
 import { Layout, LayoutCapacity, Room } from 'src/app/model/Room';
@@ -28,7 +29,8 @@ export class RoomEditComponent implements OnInit, OnDestroy {
     private dataService: DataService,
     private formBuilder: FormBuilder,
     private router: Router,
-    private formRestService: FormResetService
+    private formRestService: FormResetService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
@@ -87,14 +89,14 @@ export class RoomEditComponent implements OnInit, OnDestroy {
   }
 
   private saveUpdateRoom() {
-    this.dataService.updateRoom(this.room).subscribe(
+    this.dataService.updateRoomT(this.room, this.authService.jwtToken).subscribe(
       room => {
         this.room = room;
         this.dataChangedEvent.emit();
         this.router.navigate(['admin', 'rooms'], { queryParams: { id: this.room.id, action: 'view' } });
       },
       error => {
-        this.message = 'Something went wrong, you may wish to try again...'
+        this.message = 'Something went wrong, you may wish to try again...' + error.status
       }
     );
   }
