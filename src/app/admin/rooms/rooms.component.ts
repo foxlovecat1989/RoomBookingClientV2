@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
 import { DataService } from 'src/app/data.service';
 import { FormResetService } from 'src/app/form-reset.service';
@@ -10,7 +11,7 @@ import { Room } from 'src/app/model/Room';
   templateUrl: './rooms.component.html',
   styleUrls: ['./rooms.component.css']
 })
-export class RoomsComponent implements OnInit {
+export class RoomsComponent implements OnInit,OnDestroy{
 
   rooms!: Array<Room>;
   action!: string;
@@ -19,6 +20,7 @@ export class RoomsComponent implements OnInit {
   message = 'Please wait... getting the list of rooms';
   timesOfReloadAttempt = 0;
   isAdmin = false;
+  roleSetEventSubscription!: Subscription;
 
   constructor(
     private dataService: DataService,
@@ -30,8 +32,25 @@ export class RoomsComponent implements OnInit {
 
   ngOnInit(): void {
     this.subscribeToLoadData();
-    if(this.authService.getRole() === 'ADMIN')
+    if(this.authService.role === 'ADMIN')
       this.isAdmin = true;
+    this.loadingSetRole();
+  }
+
+  private loadingSetRole() {
+    this.roleSetEventSubscription = this.authService.roleSetEvent.subscribe(
+      next => {
+        if (next === 'ADMIN')
+          this.isAdmin = true;
+
+        else
+          this.isAdmin = false;
+      }
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.roleSetEventSubscription.unsubscribe();
   }
 
 
@@ -61,7 +80,7 @@ export class RoomsComponent implements OnInit {
 
 
   subscribeToLoadData() {
-    this.dataService.getRoomsT(this.authService.jwtToken).subscribe(
+    this.dataService.getRooms().subscribe(
       rooms => {
         this.rooms = rooms;
         this.shouldLoadingData = false;

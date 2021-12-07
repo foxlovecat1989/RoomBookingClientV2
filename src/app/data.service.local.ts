@@ -224,4 +224,7 @@ export class DataService {
     return of({result : 'OK'});
   }
 
+  getRole() : Observable<{role : string}>{
+    return of({role : 'ADMIN'});
+  }
 }

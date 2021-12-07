@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { AuthService } from 'src/app/auth.service';
 import { DataService } from 'src/app/data.service';
 import { FormResetService } from 'src/app/form-reset.service';
 import { User } from 'src/app/model/User';
@@ -9,7 +11,7 @@ import { User } from 'src/app/model/User';
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.css']
 })
-export class UsersComponent implements OnInit {
+export class UsersComponent implements OnInit, OnDestroy {
 
   users = new Array<User>();
   action!: string;
@@ -17,19 +19,40 @@ export class UsersComponent implements OnInit {
   message = 'Please wait... getting the list of users';
   shouldLoadingData = true;
   timesOfReloadAttempt = 0 ;
+  isAdmin = false;
+  roleSetEventSubscription!: Subscription;
 
 
   constructor(
     private dataService: DataService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private formResetService : FormResetService
+    private formResetService : FormResetService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
     this.loadingData();
+    if(this.authService.role === 'ADMIN')
+      this.isAdmin = true;
+    this.loadingSetRole();
   }
 
+  ngOnDestroy(): void {
+    this.roleSetEventSubscription.unsubscribe();
+  }
+
+  private loadingSetRole() {
+    this.roleSetEventSubscription = this.authService.roleSetEvent.subscribe(
+      next => {
+        if (next === 'ADMIN')
+          this.isAdmin = true;
+
+        else
+          this.isAdmin = false;
+      }
+    );
+  }
 
   private subscribequeryParams() {
     this.activatedRoute.queryParams.subscribe(

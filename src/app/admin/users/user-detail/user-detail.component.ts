@@ -1,5 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { AuthService } from 'src/app/auth.service';
 import { DataService } from 'src/app/data.service';
 import { User } from 'src/app/model/User';
 
@@ -8,7 +10,7 @@ import { User } from 'src/app/model/User';
   templateUrl: './user-detail.component.html',
   styleUrls: ['./user-detail.component.css']
 })
-export class UserDetailComponent implements OnInit {
+export class UserDetailComponent implements OnInit, OnDestroy {
 
   @Input('user')
   user!: User;
@@ -17,13 +19,34 @@ export class UserDetailComponent implements OnInit {
   dataChangedEvent = new EventEmitter();
 
   message = '';
+  isAdmin = false;
+  roleSetEventSubscription!: Subscription;
 
   constructor(
     private router: Router,
-    private dataService: DataService
+    private dataService: DataService,
+    private authService: AuthService
     ) { }
 
   ngOnInit(): void {
+    if(this.authService.role === 'ADMIN')
+      this.isAdmin = true;
+    this.loadingSetRole();
+  }
+
+  ngOnDestroy(): void {
+    this.roleSetEventSubscription.unsubscribe();
+  }
+
+  private loadingSetRole() {
+    this.roleSetEventSubscription = this.authService.roleSetEvent.subscribe(
+      next => {
+        if (next === 'ADMIN')
+          this.isAdmin = true;
+        else
+          this.isAdmin = false;
+      }
+    );
   }
 
   navigateToEdit(){

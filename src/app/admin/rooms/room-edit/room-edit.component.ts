@@ -89,7 +89,7 @@ export class RoomEditComponent implements OnInit, OnDestroy {
   }
 
   private saveUpdateRoom() {
-    this.dataService.updateRoomT(this.room, this.authService.jwtToken).subscribe(
+    this.dataService.updateRoom(this.room).subscribe(
       room => {
         this.room = room;
         this.dataChangedEvent.emit();

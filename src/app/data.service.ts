@@ -21,7 +21,7 @@ export class DataService {
   }
 
   getUser(id: number): Observable<User>{
-    return this.http.get<User>(environment.restURL + '/api/v1/users/' + id).pipe(
+    return this.http.get<User>(environment.restURL + '/api/v1/users/' + id, {withCredentials : true }).pipe(
       map(
         user => {
           return User.fromHttp(user);
@@ -32,7 +32,7 @@ export class DataService {
 
   getUsers(): Observable<Array<User>>{
 
-    return this.http.get<Array<User>>(environment.restURL + '/api/v1/users').pipe(
+    return this.http.get<Array<User>>(environment.restURL + '/api/v1/users', {withCredentials : true }).pipe(
       map(
         datas => {
           const users = new Array<User>();
@@ -45,22 +45,8 @@ export class DataService {
     );
   }
 
-  getRoomsT(token: string): Observable<Array<Room>>{
-    const headers = new HttpHeaders().append('Authorization', 'Bearer ' + token);
-    return this.http.get<Array<Room>>(environment.restURL + '/api/v1/rooms', {headers: headers})
-    .pipe(
-      map(
-        datas => {
-          const rooms = new Array<Room>();
-          datas.forEach(data => rooms.push(Room.fromHttp(data)));
-          return rooms;
-        }
-      )
-    );
-  }
-
   getRooms(): Observable<Array<Room>>{
-    return this.http.get<Array<Room>>(environment.restURL + '/api/v1/rooms')
+    return this.http.get<Array<Room>>(environment.restURL + '/api/v1/rooms', {withCredentials : true })
     .pipe(
       map(
         datas => {
@@ -73,42 +59,37 @@ export class DataService {
   }
 
   updateRoom(room: Room) : Observable<Room>{
-    return this.http.put<Room>(environment.restURL + '/api/v1/rooms', this.getCorrectedRoom(room));
-  }
-
-  updateRoomT(room: Room, token: string) : Observable<Room>{
-    const headers = new HttpHeaders().append('Authorization', 'Bearer ' + token);
-    return this.http.put<Room>(environment.restURL + '/api/v1/rooms', this.getCorrectedRoom(room), {headers: headers});
+    return this.http.put<Room>(environment.restURL + '/api/v1/rooms', this.getCorrectedRoom(room), {withCredentials : true});
   }
 
   addRoom(newRoom : Room) : Observable<Room>{
-    return this.http.post<Room>(environment.restURL + '/api/v1/rooms', this.getCorrectedRoom(newRoom));
+    return this.http.post<Room>(environment.restURL + '/api/v1/rooms', this.getCorrectedRoom(newRoom), {withCredentials : true });
   }
 
 
   deleteRoom(id: number) : Observable<any>{
-    return this.http.delete(environment.restURL + '/api/v1/rooms/' + id);
+    return this.http.delete(environment.restURL + '/api/v1/rooms/' + id, {withCredentials : true });
   }
 
   updateUser(updateUser: User): Observable<User>{
-    return this.http.put<User>(environment.restURL + '/api/v1/users', updateUser);
+    return this.http.put<User>(environment.restURL + '/api/v1/users', updateUser, {withCredentials : true });
   }
 
   addUser(newUser: User, password: string): Observable<User>{
     const fullUser = {id : newUser.id, name : newUser.name, password : password };
-    return this.http.post<User>(environment.restURL + '/api/v1/users', fullUser);
+    return this.http.post<User>(environment.restURL + '/api/v1/users', fullUser, {withCredentials : true });
   }
 
   deleteUser(id: number) : Observable<any>{
-    return this.http.delete(environment.restURL + '/api/v1/users/' + id);
+    return this.http.delete(environment.restURL + '/api/v1/users/' + id, {withCredentials : true });
   }
 
   resetUserPassword(id: number) : Observable<any>{
-    return this.http.get(environment.restURL + '/api/v1/users/resetPassword/' + id);
+    return this.http.get(environment.restURL + '/api/v1/users/resetPassword/' + id, {withCredentials : true });
   }
 
   getBooking(id: number) : Observable<Booking>{
-    return this.http.get<Booking>(environment.restURL + '/api/v1/bookings?id=' + id).pipe(
+    return this.http.get<Booking>(environment.restURL + '/api/v1/bookings?id=' + id, {withCredentials : true }).pipe(
       map(booking => Booking.fromHttp(booking))
     );
   }
@@ -126,18 +107,43 @@ export class DataService {
     );
   }
 
-  updateBooking(booking: Booking) : Observable<any> {
-
-    return of(null);
+  updateBooking(booking: Booking) : Observable<Booking> {
+    return this.http.put<Booking>(environment.restURL + '/api/bookings', this.getCorrectedBooking(booking), {withCredentials : true});
   }
 
-  addBooking(newBooking: Booking) : Observable<any>{
-    return of(null);
+  addBooking(newBooking: Booking) : Observable<Booking> {
+    return this.http.post<Booking>(environment.restURL + '/api/bookings', this.getCorrectedBooking(newBooking), {withCredentials : true});
   }
 
   deleteBooking(id : number) : Observable<any>{
 
-    return this.http.delete(environment.restURL + '/api/v1/bookings/' + id);
+    return this.http.delete(environment.restURL + '/api/v1/bookings/' + id, {withCredentials : true });
+  }
+
+  private getCorrectedBooking(booking: Booking) {
+
+    let correctLayout;
+    for (let member in Layout) {
+      if(LayoutCapacity.isValidKey(member)){
+        if (Layout[member] === booking.layout) {
+          correctLayout = member;
+        }
+      }
+    }
+
+    if (booking.startTime.length < 8) {
+      booking.startTime = booking.startTime + ':00';
+    }
+
+    if (booking.endTime.length < 8) {
+      booking.endTime = booking.endTime + ':00';
+    }
+
+    const correctedBooking = {id : booking.id,  room: this.getCorrectedRoom(booking.room), user: booking.user,
+      title: booking.title, date: booking.date, startTime: booking.startTime, endTime: booking.endTime,
+      participants: booking.participants, layout: correctLayout};
+
+    return correctedBooking;
   }
 
   getValuesOfLayout(): Observable<Array<string>>{
@@ -156,7 +162,16 @@ export class DataService {
   validateUser(username: string, password: string): Observable<{result : string}>{
     const authData = btoa(`${username}:${password}`);
     const headers = new HttpHeaders().append('Authorization', 'Basic ' + authData);
-    return this.http.get<{result : string}>(environment.restURL + '/api/basicAuth/validate', {headers: headers});
+    return this.http.get<{result : string}>(environment.restURL + '/api/basicAuth/validate', {headers : headers, withCredentials : true});
+  }
+
+  getRole() : Observable<{role : string}>{
+    const headers = new HttpHeaders().append("X-Requested-With", "XMLHttpRequest");
+    return this.http.get<{role : string}>(environment.restURL + '/api/v1/users/currentUserRole', {headers : headers, withCredentials : true});
+  }
+
+  logout() : Observable<string>{
+    return this.http.get<string>(environment.restURL + '/api/v1/users/logout', {withCredentials : true});
   }
 
   private getCorrectedRoom(room : Room) {

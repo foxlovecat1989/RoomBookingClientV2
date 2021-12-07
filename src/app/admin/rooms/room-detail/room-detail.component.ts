@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
 import { DataService } from 'src/app/data.service';
 import { Layout, Room } from 'src/app/model/Room';
@@ -9,7 +10,7 @@ import { Layout, Room } from 'src/app/model/Room';
   templateUrl: './room-detail.component.html',
   styleUrls: ['./room-detail.component.css']
 })
-export class RoomDetailComponent implements OnInit {
+export class RoomDetailComponent implements OnInit, OnDestroy {
 
   @Input('room')
   room!: Room;
@@ -17,6 +18,7 @@ export class RoomDetailComponent implements OnInit {
   dataChangedEvent = new EventEmitter();
   message = '';
   isAdmin = false;
+  roleSetEventSubscription!: Subscription;
 
   constructor(
     private router: Router,
@@ -25,8 +27,25 @@ export class RoomDetailComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    if(this.authService.getRole() === 'ADMIN')
+    if(this.authService.role === 'ADMIN')
       this.isAdmin = true;
+    this.loadingSetRole();
+  }
+
+  ngOnDestroy(): void {
+    this.roleSetEventSubscription.unsubscribe();
+  }
+
+  private loadingSetRole() {
+    this.roleSetEventSubscription = this.authService.roleSetEvent.subscribe(
+      next => {
+        if (next === 'ADMIN')
+          this.isAdmin = true;
+
+        else
+          this.isAdmin = false;
+      }
+    );
   }
 
   navigateToEdit(){

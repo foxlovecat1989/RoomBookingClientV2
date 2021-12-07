@@ -1,6 +1,8 @@
 import { formatDate } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { AuthService } from '../auth.service';
 import { DataService } from '../data.service';
 import { Booking } from '../model/Booking';
 
@@ -9,22 +11,43 @@ import { Booking } from '../model/Booking';
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.css']
 })
-export class CalendarComponent implements OnInit {
+export class CalendarComponent implements OnInit, OnDestroy {
 
   bookings!: Array<Booking>;
   selectedDate!: string;
   dataLoaded = false;
   message = '';
+  isAdmin = false;
+  roleSetEventSubscription!: Subscription;
 
   constructor(
     private dataService: DataService,
     private router: Router,
-    private activatedRoute : ActivatedRoute
+    private activatedRoute : ActivatedRoute,
+    private authService: AuthService
   ) { }
 
 
   ngOnInit(): void {
     this.subscribequeryParams();
+    if(this.authService.role === 'ADMIN')
+      this.isAdmin = true;
+    this.loadingSetRole();
+  }
+
+  ngOnDestroy(): void {
+    this.roleSetEventSubscription.unsubscribe();
+  }
+
+  private loadingSetRole() {
+    this.roleSetEventSubscription = this.authService.roleSetEvent.subscribe(
+      next => {
+        if (next === 'ADMIN')
+          this.isAdmin = true;
+        else
+          this.isAdmin = false;
+      }
+    );
   }
 
   private subscribequeryParams() {

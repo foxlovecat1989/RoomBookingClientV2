@@ -37,6 +37,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         }
       }
     );
+    this.authService.checkIfAlreadyAuthenticated();
   }
 
   onSubmit(){
